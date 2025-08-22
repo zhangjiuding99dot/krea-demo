@@ -1,7 +1,8 @@
 "use client";
 
-import clsx from "clsx";
 import { CSSProperties, useRef, useState } from "react";
+import { useActiveAsset } from "../store";
+import { cn } from "@/lib/utils";
 
 export default function ImagePanel() {
   const dragArgs = useRef({
@@ -17,7 +18,7 @@ export default function ImagePanel() {
 
   const style: CSSProperties = {
     width: "auto",
-    height: '80%',
+    height: '65%',
     objectFit: "contain",
     top: "50%",
     left: "50%",
@@ -69,6 +70,8 @@ export default function ImagePanel() {
     });
   }
 
+  const activeAsset = useActiveAsset()
+
   return (
     <div
       className="w-full h-full relative cursor-grab z-[1]"
@@ -80,12 +83,19 @@ export default function ImagePanel() {
         transform: `translate(${panelArgs.offsetX}px, ${panelArgs.offsetY}px) scale(${panelArgs.ratio})`,
       }}
     >
-      <img
-        src="https://www.krea.ai/api/img?f=webp&i=https%3A%2F%2Fgen.krea.ai%2Fimages%2F515e4899-7c6a-4ef2-8aee-974f6f29bb6b.png&s=1024"
-        className="absolute select-none"
-        style={style}
-        draggable="false"
-      />
+      {
+        activeAsset.pic && (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            key={activeAsset.pic}
+            src={activeAsset.pic}
+            className={cn('absolute select-none')}
+            style={style}
+            draggable="false"
+            alt={'edit image'}
+          />
+        )
+      }
     </div>
   );
 }

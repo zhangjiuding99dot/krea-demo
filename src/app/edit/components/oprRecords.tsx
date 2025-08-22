@@ -1,74 +1,92 @@
+import { useSearchParams } from "next/navigation";
+import {
+  editPageHelpers,
+  useActiveAsset,
+  useEditPageStore,
+  useSessionOprs,
+} from "../store";
+import { cn } from "@/lib/utils";
+
 export default function OprRecords() {
+  const searchParams = useSearchParams();
+  const sessionId = searchParams.get("project") || "";
+  const sessionOprs = useSessionOprs(sessionId);
+  const { oprationId, assetId } = useActiveAsset();
+  const setCurrentAsset = useEditPageStore((s) => s.setCurrentAsset);
+
+  if (!sessionOprs) {
+    return null;
+  }
+
   return (
-    <div className="absolute right-4 z-[9] top-1/2 -translate-y-1/2 flex max-h-[65vh] overflow-y-auto flex-col justify-center bg-gray-100  rounded-2xl min-h-0" style={{ scrollbarWidth: 'none' }}>
+    <div
+      className="absolute right-4 z-[9] top-1/2 -translate-y-1/2 flex max-h-[65vh] overflow-y-auto flex-col justify-center bg-gray-100  rounded-2xl min-h-0"
+      style={{ scrollbarWidth: "none" }}
+    >
       <div className="min-h-0 flex flex-col gap-2 p-2">
-        <div className="flex flex-row gap-2 items-start">
-          <button className="cursor-pointer active:scale-95 transition-all">
-            <img className="w-[48px] h-[48px] rounded-md object-cover border-2 border-solid border-sky-700" src='https://www.krea.ai/api/img?f=webp&i=https%3A%2F%2Fgen.krea.ai%2Fimages%2F515e4899-7c6a-4ef2-8aee-974f6f29bb6b.png&s=1024' />
-          </button>
-          <button>
-            <img className="w-[64px] h-auto min-h-[48px] rounded-md object-cover border-2 border-solid border-sky-700" src='https://www.krea.ai/api/img?f=webp&i=https%3A%2F%2Fgen.krea.ai%2Fimages%2F515e4899-7c6a-4ef2-8aee-974f6f29bb6b.png&s=1024' />
-          </button>
-          <button>
-            <img className="w-[64px] h-auto min-h-[48px] rounded-md object-cover border-2 border-solid border-sky-700" src='https://www.krea.ai/api/img?f=webp&i=https%3A%2F%2Fgen.krea.ai%2Fimages%2F515e4899-7c6a-4ef2-8aee-974f6f29bb6b.png&s=1024' />
-          </button>
-        </div>
-        <div className="flex flex-row gap-2 items-start">
-          <button>
-            <img className="w-[48px] h-[48px] rounded-md object-cover border-2 border-solid border-sky-700" src='https://www.krea.ai/api/img?f=webp&i=https%3A%2F%2Fgen.krea.ai%2Fimages%2F515e4899-7c6a-4ef2-8aee-974f6f29bb6b.png&s=1024' />
-          </button>
-          <button>
-            <img className="w-[64px] h-auto min-h-[48px] rounded-md object-cover border-2 border-solid border-sky-700" src='https://www.krea.ai/api/img?f=webp&i=https%3A%2F%2Fgen.krea.ai%2Fimages%2F515e4899-7c6a-4ef2-8aee-974f6f29bb6b.png&s=1024' />
-          </button>
-        </div>
-        <div className="flex flex-row gap-2 items-start">
-          <button>
-            <img className="w-[48px] h-[48px] rounded-md object-cover border-2 border-solid border-sky-700" src='https://www.krea.ai/api/img?f=webp&i=https%3A%2F%2Fgen.krea.ai%2Fimages%2F515e4899-7c6a-4ef2-8aee-974f6f29bb6b.png&s=1024' />
-          </button>
-          <button>
-            <img className="w-[64px] h-auto min-h-[48px] rounded-md object-cover border-2 border-solid border-sky-700" src='https://www.krea.ai/api/img?f=webp&i=https%3A%2F%2Fgen.krea.ai%2Fimages%2F515e4899-7c6a-4ef2-8aee-974f6f29bb6b.png&s=1024' />
-          </button>
-        </div>
-        <div className="flex flex-row gap-2 items-start">
-          <button>
-            <img className="w-[48px] h-[48px] rounded-md object-cover border-2 border-solid border-sky-700" src='https://www.krea.ai/api/img?f=webp&i=https%3A%2F%2Fgen.krea.ai%2Fimages%2F515e4899-7c6a-4ef2-8aee-974f6f29bb6b.png&s=1024' />
-          </button>
-          <button>
-            <img className="w-[64px] h-auto min-h-[48px] rounded-md object-cover border-2 border-solid border-sky-700" src='https://www.krea.ai/api/img?f=webp&i=https%3A%2F%2Fgen.krea.ai%2Fimages%2F515e4899-7c6a-4ef2-8aee-974f6f29bb6b.png&s=1024' />
-          </button>
-        </div>
-        <div className="flex flex-row gap-2 items-start">
-          <button>
-            <img className="w-[48px] h-[48px] rounded-md object-cover border-2 border-solid border-sky-700" src='https://www.krea.ai/api/img?f=webp&i=https%3A%2F%2Fgen.krea.ai%2Fimages%2F515e4899-7c6a-4ef2-8aee-974f6f29bb6b.png&s=1024' />
-          </button>
-          <button>
-            <img className="w-[64px] h-auto min-h-[48px] rounded-md object-cover border-2 border-solid border-sky-700" src='https://www.krea.ai/api/img?f=webp&i=https%3A%2F%2Fgen.krea.ai%2Fimages%2F515e4899-7c6a-4ef2-8aee-974f6f29bb6b.png&s=1024' />
-          </button>
-        </div>
-        <div className="flex flex-row gap-2 items-start">
-          <button>
-            <img className="w-[48px] h-[48px] rounded-md object-cover border-2 border-solid border-sky-700" src='https://www.krea.ai/api/img?f=webp&i=https%3A%2F%2Fgen.krea.ai%2Fimages%2F515e4899-7c6a-4ef2-8aee-974f6f29bb6b.png&s=1024' />
-          </button>
-          <button>
-            <img className="w-[64px] h-auto min-h-[48px] rounded-md object-cover border-2 border-solid border-sky-700" src='https://www.krea.ai/api/img?f=webp&i=https%3A%2F%2Fgen.krea.ai%2Fimages%2F515e4899-7c6a-4ef2-8aee-974f6f29bb6b.png&s=1024' />
-          </button>
-        </div>
-        <div className="flex flex-row gap-2 items-start">
-          <button>
-            <img className="w-[48px] h-[48px] rounded-md object-cover border-2 border-solid border-sky-700" src='https://www.krea.ai/api/img?f=webp&i=https%3A%2F%2Fgen.krea.ai%2Fimages%2F515e4899-7c6a-4ef2-8aee-974f6f29bb6b.png&s=1024' />
-          </button>
-          <button>
-            <img className="w-[64px] h-auto min-h-[48px] rounded-md object-cover border-2 border-solid border-sky-700" src='https://www.krea.ai/api/img?f=webp&i=https%3A%2F%2Fgen.krea.ai%2Fimages%2F515e4899-7c6a-4ef2-8aee-974f6f29bb6b.png&s=1024' />
-          </button>
-        </div>
-        <div className="flex flex-row gap-2 items-start">
-          <button>
-            <img className="w-[48px] h-[48px] rounded-md object-cover border-2 border-solid border-sky-700" src='https://www.krea.ai/api/img?f=webp&i=https%3A%2F%2Fgen.krea.ai%2Fimages%2F515e4899-7c6a-4ef2-8aee-974f6f29bb6b.png&s=1024' />
-          </button>
-          <button>
-            <img className="w-[64px] h-auto min-h-[48px] rounded-md object-cover border-2 border-solid border-sky-700" src='https://www.krea.ai/api/img?f=webp&i=https%3A%2F%2Fgen.krea.ai%2Fimages%2F515e4899-7c6a-4ef2-8aee-974f6f29bb6b.png&s=1024' />
-          </button>
-        </div>
+        {sessionOprs.map((opr, idx) => {
+          return (
+            <div
+              key={opr.oprationId}
+              className="flex flex-row gap-2 items-start"
+            >
+              <button
+                className={cn(
+                  "cursor-pointer active:scale-95 hover:scale-105 transition-all rounded-md overflow-hidden border-2 border-solid border-transparent",
+                  {
+                    "border-sky-700":
+                      (!assetId && idx === 0) || oprationId === opr.oprationId,
+                  }
+                )}
+                onClick={() => {
+                  setCurrentAsset({
+                    oprationId: opr.oprationId,
+                    pic: opr.parentPic,
+                    assetId: undefined,
+                  });
+                }}
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  className={cn("w-[48px] h-[48px] object-cover")}
+                  src={opr.parentPic}
+                  alt={opr.prompt}
+                />
+              </button>
+              {opr.output.map((item) => {
+                const pic = editPageHelpers.getOgUrl("Krea/Edit", item.prompt, item.assetId)
+                return (
+                  <button
+                    key={item.assetId}
+                    className={cn(
+                      "cursor-pointer active:scale-95 hover:scale-105 transition-all rounded-md overflow-hidden  border-2 border-solid border-transparent",
+                      {
+                        "border-sky-700":
+                          assetId === item.assetId,
+                      }
+                    )}
+                    onClick={() => {
+                      setCurrentAsset({
+                        oprationId: undefined,
+                        assetId: item.assetId,
+                        pic: pic,
+                      });
+                    }}
+                  >
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      className={cn(
+                        "w-[64px] h-auto min-h-[48px] object-cover"
+                      )}
+                      src={pic}
+                      alt={item.prompt}
+                    />
+                  </button>
+                );
+              })}
+            </div>
+          );
+        })}
       </div>
     </div>
   );

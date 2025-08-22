@@ -17,9 +17,7 @@ export default function WorkBox({ className }: { className?: string }) {
     return (
       <div className={clsx(className, "w-full h-full relative")}>
         <SessionManager />
-
         <Intro />
-  
         <ModelSelector />
       </div>
     );
@@ -29,13 +27,9 @@ export default function WorkBox({ className }: { className?: string }) {
   return (
     <div className={clsx(className, "w-full h-full relative")}>
       <ImagePanel />
-
       <SessionManager />
-
       <ChatInput />
-
       <ModelSelector />
-
       <OprRecords />
     </div>
   );
