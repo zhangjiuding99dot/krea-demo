@@ -61,18 +61,18 @@ export default function ChatInput() {
       return;
     }
 
-    const assetId = nanoid(10);
+    // const assetId = nanoid(10);
     setGenerating(true);
 
     try {
-      const resultUrl = await goGenerate(assetId, activeAsset.pic, userInput);
+      // const resultUrl = await goGenerate(assetId, activeAsset.pic, userInput);
       setUserInput("");
 
       generateImage(activeSession.id, userInput, genTotal, {
         parentPic: activeAsset.pic,
         prefix: activeAsset.assetId || activeAsset.oprationId,
-        currentPic: resultUrl,
-        assetId: assetId,
+        // currentPic: resultUrl,
+        // assetId: assetId,
       });
     } catch (err) {
       toast(`生成失败: ${err}`);

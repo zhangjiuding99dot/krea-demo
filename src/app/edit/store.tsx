@@ -100,6 +100,8 @@ const createEditPageStore = (
         ) => {
           const oprationId = nanoid(10);
 
+          const rnd = Math.random() * 7 >> 0
+
           const oprItem: EditPage.EditOprationItem = {
             sessionId,
             oprationId,
@@ -112,7 +114,7 @@ const createEditPageStore = (
               assetId: (idx === 0 ? assetId : undefined) || nanoid(10),
               prompt: `${idx}: ${prompt}`,
               createdAt: Date.now(),
-              pic: currentPic
+              pic: `/img${(rnd+idx)%7 + 1}.webp`
             })),
           };
 
@@ -128,7 +130,7 @@ const createEditPageStore = (
             },
             currentAsset: {
               assetId: lastOutput?.assetId || '',
-              pic: currentPic || editPageHelpers.getOgUrl('Krea/Edit', lastOutput?.prompt || '-', lastOutput?.assetId)
+              pic: lastOutput?.pic || editPageHelpers.getOgUrl('Krea/Edit', lastOutput?.prompt || '-', lastOutput?.assetId)
             }
           });
 
