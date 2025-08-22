@@ -28,7 +28,7 @@ export default function WorkBox({ className }: { className?: string }) {
     <div className={clsx(className, "w-full h-full relative")}>
       <ImagePanel />
       <SessionManager />
-      <ChatInput />
+      <ChatInput key={projectId} />
       <ModelSelector />
       <OprRecords />
     </div>

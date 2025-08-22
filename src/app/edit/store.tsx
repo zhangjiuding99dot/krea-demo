@@ -22,6 +22,7 @@ export declare namespace EditPage {
     assetId: string;
     prompt: string;
     createdAt: number;
+    pic?: string
   }
 
   export interface EditOprationItem {
@@ -58,7 +59,7 @@ export declare namespace EditPage {
       sessionId: string,
       prompt: string,
       genTotal?: number,
-      option?: { parentPic: string, prefix?: string }
+      option?: { parentPic: string, prefix?: string, currentPic?: string, assetId?: string }
     ) => EditOprationItem;
     setCurrentAsset: (asset: CurrentAsset) => void;
     clearCurrentAsset: () => void;
@@ -95,7 +96,7 @@ const createEditPageStore = (
           sessionId,
           prompt,
           genTotal = 1,
-          { parentPic } = { parentPic: "" }
+          { parentPic, currentPic, assetId } = { parentPic: "", currentPic: '' }
         ) => {
           const oprationId = nanoid(10);
 
@@ -108,9 +109,10 @@ const createEditPageStore = (
             createdAt: Date.now(),
             output: new Array(genTotal).fill(0).map((_, idx) => ({
               sessionId,
-              assetId: nanoid(10),
+              assetId: (idx === 0 ? assetId : undefined) || nanoid(10),
               prompt: `${idx}: ${prompt}`,
               createdAt: Date.now(),
+              pic: currentPic
             })),
           };
 
@@ -126,7 +128,7 @@ const createEditPageStore = (
             },
             currentAsset: {
               assetId: lastOutput?.assetId || '',
-              pic: editPageHelpers.getOgUrl('Krea/Edit', lastOutput?.prompt || '-', lastOutput?.assetId)
+              pic: currentPic || editPageHelpers.getOgUrl('Krea/Edit', lastOutput?.prompt || '-', lastOutput?.assetId)
             }
           });
 

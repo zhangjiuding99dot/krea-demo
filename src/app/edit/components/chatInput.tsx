@@ -1,41 +1,85 @@
 import { cn } from "@/lib/utils";
-import { BotMessageSquareIcon, SparklesIcon } from "lucide-react";
+import { BotMessageSquareIcon, LoaderIcon, SparklesIcon } from "lucide-react";
 import { useState } from "react";
 import { useActiveAsset, useActiveSession, useEditPageStore } from "../store";
+import { toast } from "sonner";
+import { nanoid } from "nanoid";
 
 export default function ChatInput() {
   const [userInput, setUserInput] = useState("");
   const [genTotal, setGenTotal] = useState(1);
-  const generateImage = useEditPageStore(s => s.generateImage)
-  const activeAsset = useActiveAsset()
+  const generateImage = useEditPageStore((s) => s.generateImage);
+  const activeAsset = useActiveAsset();
+  const [generating, setGenerating] = useState(false);
 
   const setPreset = () => {
     setUserInput("hello, this is a preset prompt");
   };
 
-  const activeSession = useActiveSession()
+  const activeSession = useActiveSession();
 
   if (!activeSession) {
-    return null
+    return null;
   }
 
-  const handleGenerate = () => {
-    if (!userInput.trim().length) {
-      return null
+  const goGenerate = async (id: string, imageUrl: string, prompt: string) => {
+    const formData = new FormData();
+
+    const imageRes = await fetch(imageUrl)
+    const imageBlob = await imageRes.blob()
+    const imageFile = new File([imageBlob], id, { type: imageBlob.type })
+
+    console.log(' imageBlob.type',  imageBlob.type)
+
+    formData.append("image", imageFile);
+    formData.append("id", id);
+    formData.append("prompt", prompt);
+
+    const response = await fetch("/api/generate", {
+      method: "POST",
+      body: formData,
+    });
+
+    if (!response.ok) {
+      throw new Error("处理失败");
     }
 
-    setUserInput('')
+    // 将响应转换为 Blob URL
+    const data = await response.json();
+    if (!data.success) {
+      throw new Error("处理失败");
+    }
 
-    generateImage(
-      activeSession.id,
-      userInput,
-      genTotal,
-      {
+    return data.data.fileUrl;
+  };
+
+  const handleGenerate = async () => {
+    if (!userInput.trim().length) {
+      return null;
+    }
+    if (generating) {
+      return;
+    }
+
+    const assetId = nanoid(10);
+    setGenerating(true);
+
+    try {
+      const resultUrl = await goGenerate(assetId, activeAsset.pic, userInput);
+      setUserInput("");
+
+      generateImage(activeSession.id, userInput, genTotal, {
         parentPic: activeAsset.pic,
-        prefix: activeAsset.assetId || activeAsset.oprationId
-      }
-    )
-  }
+        prefix: activeAsset.assetId || activeAsset.oprationId,
+        currentPic: resultUrl,
+        assetId: assetId,
+      });
+    } catch (err) {
+      toast(`生成失败: ${err}`);
+    } finally {
+      setGenerating(false);
+    }
+  };
 
   return (
     <div className="absolute left-1/2 bottom-[24px] -translate-x-1/2 z-[10] flex w-[60vw] max-w-[800px] gap-2 p-3 bg-gray-100 rounded-2xl">
@@ -47,6 +91,7 @@ export default function ChatInput() {
             maxLength={2000}
             placeholder="Write what you want to change in your image and click generate, or pick a preset and choose from many options!"
             value={userInput}
+            disabled={generating}
             onChange={(e) => {
               setUserInput(e.target.value);
             }}
@@ -55,6 +100,7 @@ export default function ChatInput() {
             <div className="group relative h-fit w-fit">
               <button
                 className="bg-centergroup relative mr-auto flex aspect-square h-[88px] w-fit cursor-pointer flex-col items-center items-center justify-center rounded-lg rounded-xl bg-black/5 bg-black/5 bg-cover bg-cover bg-center text-black transition-transform duration-300 ease-[cubic-bezier(0,1.2,.68,1)] hover:scale-[1.05] hover:bg-black/10 active:scale-100 dark:bg-white/5 dark:text-white dark:hover:bg-white/10"
+                disabled={generating}
                 onClick={setPreset}
               >
                 <div className="relative flex h-full w-full items-center justify-center overflow-hidden rounded-2xl">
@@ -82,7 +128,7 @@ export default function ChatInput() {
                 className={cn(
                   "h-full flex-1 cursor-pointer text-xs font-medium transition-[scale] duration-400 ease-[cubic-bezier(0,1.2,.68,1)] active:scale-95 bg-white text-black",
                   {
-                    'rounded-l-full': optionItem === 1,
+                    "rounded-l-full": optionItem === 1,
                     "rounded-r-full": optionItem === 2,
                     "bg-black text-white": optionItem === genTotal,
                   }
@@ -106,11 +152,15 @@ export default function ChatInput() {
                 "cursor-not-allowed": userInput.length === 0,
               }
             )}
-            disabled={userInput.length === 0}
+            disabled={userInput.length === 0 || generating}
             onClick={handleGenerate}
           >
-            <SparklesIcon size={20} />
-            <span className="hidden lg:inline">Generate</span>
+            {generating ? (
+              <LoaderIcon className="animate-spin" size={20} />
+            ) : (
+              <SparklesIcon size={20} />
+            )}
+            <span className="hidden lg:inline">{generating ? 'Generating' : 'Generate'}</span>
           </button>
         </div>
       </div>

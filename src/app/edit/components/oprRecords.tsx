@@ -34,8 +34,7 @@ export default function OprRecords() {
                 className={cn(
                   "cursor-pointer active:scale-95 hover:scale-105 transition-all rounded-md overflow-hidden border-2 border-solid border-transparent",
                   {
-                    "border-sky-700":
-                      (!assetId && idx === 0) || oprationId === opr.oprationId,
+                    "border-sky-700": oprationId ? oprationId === opr.oprationId : (!assetId && idx === 0)
                   }
                 )}
                 onClick={() => {
@@ -54,7 +53,7 @@ export default function OprRecords() {
                 />
               </button>
               {opr.output.map((item) => {
-                const pic = editPageHelpers.getOgUrl("Krea/Edit", item.prompt, item.assetId)
+                const pic = item.pic || editPageHelpers.getOgUrl("Krea/Edit", item.prompt, item.assetId)
                 return (
                   <button
                     key={item.assetId}
