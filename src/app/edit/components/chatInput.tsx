@@ -24,6 +24,8 @@ export default function ChatInput() {
       return null
     }
 
+    setUserInput('')
+
     generateImage(
       activeSession.id,
       userInput,
